@@ -1,0 +1,32 @@
+*.dcd
+*.coor
+*.vel
+*.xst
+*.BAK
+# Промежуточные файлы VMD/Tcl (можно добавить еще, если нужно)
+building-dna/dsdna_A.pdb
+building-dna/dsdna_B.pdb
+# Оставляем dsdna.pdb и dsdna.psf как результат шага 3.1
+building-sin+dna/*_placed.pdb
+building-sin+dna/*_sol.pdb
+building-sin+dna/*_sol.psf
+building-sin+dna/*_hex.pdb
+building-sin+dna/*_hex.psf
+# Оставляем *_ions.pdb/psf как результат шага 3.6.5
+building-sin+dna/*_restrain.pdb
+building-sin+dna/*_langevin.pdb
+building-sin+dna/specific.pdb
+# Оставляем sin_positions.txt и specific*.dx как результат шагов 3.6.8/10
+running-sin/scaled_*.pdb # Оставляем scaled_*.xsc
+
+# Скомпилированные утилиты из папки grid/ (если вы их там компилировали)
+grid/gridExternalField
+grid/thirdForce
+grid/gridSourcePore
+grid/gridShave
+grid/solvate
+
+# Временные файлы
+*.tmp
+run_*.tcl
+*/output/

@@ -1,0 +1,74 @@
+set sys sin
+set voltage 20
+set xsc  scaled_${sys}_ions.xsc
+
+set this ${sys}_${voltage}V
+set last ../building-${sys}/${sys}_eq
+
+numsteps 			5000000
+structure			../building-${sys}/${sys}_ions.psf	
+coordinates			scaled_${sys}_ions.pdb
+
+outputName 			$this
+#binCoordinates                  $last.restart.coor
+binVelocities                   $last.restart.vel
+#extendedSystem                  $last.restart.xsc
+extendedSystem                  $xsc
+
+# temperature control
+langevin                        on
+langevinTemp                    295
+langevinFile			../building-${sys}/${sys}_langevin.pdb
+langevinCol			B
+
+# parameters
+parameters			../c32b1/toppar/par_all27_prot_na.prm
+parameters			silicon_nitride.par
+paraTypeCharmm                  on
+exclude                         scaled1-4
+1-4scaling                      1
+
+switching                       on
+switchDist                      10
+cutoff                          12
+pairListDist                    16
+
+# integraion
+timestep                        1
+nonBondedFreq                   2
+fullElectFrequency              2
+stepsPerCycle                   2
+GPUresident                     on
+rigidBonds                      none
+
+# output
+binaryOutput                    yes
+binaryRestart                   yes
+wrapAll				yes
+wrapNearest			yes
+comMotion                       yes
+
+outputEnergies                  1000
+outputPressure			1000
+outputTiming                    1000
+xstFreq                         1000
+dcdFreq                         5000
+restartFreq                     5000
+
+# electrostatics
+pme                             on
+pmeGridSizeX                    96
+pmeGridSizeY                    96
+pmeGridSizeZ                    192
+
+# external forces
+constraints                     on
+consKCol                        B
+consRef                         ../building-${sys}/${sys}_restrain.pdb
+consKFile                       ../building-${sys}/${sys}_restrain.pdb
+
+set inStream [open $xsc r]
+set lengthZ [lindex [lindex [split [read $inStream] \n] 2] 9]
+close $inStream
+eFieldOn                       yes
+eField                         0.0 0.0 [expr 23.06054917 * $voltage / $lengthZ]

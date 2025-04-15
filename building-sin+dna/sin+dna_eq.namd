@@ -1,0 +1,83 @@
+set sys sin+dna
+set this ${sys}_eq
+set last ${sys}_min
+
+numsteps 			500000
+structure			${sys}_ions.psf	
+coordinates			${sys}_ions.pdb
+
+outputName 			$this
+binCoordinates                  $last.restart.coor
+#binVelocities                   $last.restart.vel
+temperature                     295
+extendedSystem                  $last.restart.xsc
+
+# temperature control
+langevin                        on
+langevinTemp                    295
+langevinFile			${sys}_langevin.pdb
+langevinCol			B
+
+# pressure control
+useGroupPressure		on
+useFlexibleCell                 yes
+useConstantArea			yes
+langevinPiston                  on
+langevinPistonTarget            1.01325
+langevinPistonTemp              295
+langevinPistonDecay             300
+langevinPistonPeriod            300
+
+# parameters
+parameters			../c32b1/toppar/par_all27_prot_na.prm
+parameters			silicon_nitride.par
+paraTypeCharmm                  on
+exclude                         scaled1-4
+1-4scaling                      1
+
+switching                       on
+switchDist                      10
+cutoff                          12
+pairListDist                    14
+
+# integraion
+timestep                        1
+nonBondedFreq                   2
+fullElectFrequency              4
+stepsPerCycle                   20
+
+# output
+binaryOutput                    yes
+binaryRestart                   yes
+wrapAll				yes
+wrapNearest			yes
+comMotion                       yes
+
+outputEnergies                  1000
+outputPressure			1000
+outputTiming                    1000
+xstFreq                         1000
+dcdFreq                         5000
+restartFreq                     5000
+
+# electrostatics
+pme                             on
+pmeGridSizeX                    96
+pmeGridSizeY                    96
+pmeGridSizeZ                    192
+
+# external forces
+constraints                     on
+consKCol                        B
+consRef                         ${sys}_restrain.pdb
+consKFile                       ${sys}_restrain.pdb
+
+gridforce                       on
+gridforceFile                   specific.pdb
+gridforceCol                    B
+gridforceChargeCol              O
+gridforcePotFile                specific2-2.dx
+gridforceScale                  2 2 2
+gridforceCont1                  on
+gridforceCont2                  on
+gridforceCont3                  off

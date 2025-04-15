@@ -1,0 +1,56 @@
+set sys sin
+numsteps 			2000
+structure			${sys}_ions.psf	
+coordinates			${sys}_ions.pdb
+outputName 			${sys}_min
+minimization                    on
+
+# system dimensions
+cellBasisVector1                91.14 0.0 0.0
+cellBasisVector2                45.57 78.92955530091373 0.0
+cellBasisVector3                0.0 0.0 254.472
+cellOrigin                      0.0 0.0 0.0
+
+# parameters
+parameters			../c32b1/toppar/par_all27_na.prm
+parameters			silicon_nitride.par
+paraTypeCharmm                  on
+exclude                         scaled1-4
+1-4scaling                      1
+
+switching                       on
+switchDist                      10
+cutoff                          12
+pairListDist                    14
+
+# integraion
+timestep                        1
+nonBondedFreq                   2
+fullElectFrequency              4
+stepsPerCycle                   20
+
+# output
+binaryOutput                    yes
+binaryRestart                   yes
+wrapAll				yes
+wrapNearest			yes
+comMotion                       yes
+
+outputEnergies                  1000
+outputPressure			1000
+outputTiming                    1000
+xstFreq                         1000
+dcdFreq                         1000
+restartFreq                     1000
+
+# electrostatics
+pme                             on
+pmeGridSizeX                    96
+pmeGridSizeY                    96
+pmeGridSizeZ                    192
+
+# external forces
+constraints                     on
+consKCol                        B
+consRef                         ${sys}_restrain.pdb
+consKFile                       ${sys}_restrain.pdb
