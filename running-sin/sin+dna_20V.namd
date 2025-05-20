@@ -1,5 +1,5 @@
 set sys sin+dna
-set voltage 20
+set voltage 10
 set xsc  scaled_${sys}_ions.xsc
 
 set this ${sys}_${voltage}V
