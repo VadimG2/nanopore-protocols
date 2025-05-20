@@ -11,6 +11,7 @@
 # Removes argument passing for paths to scaleToMeanNptSize.tcl, assuming it handles paths internally.
 # NOTE: Internal errors in scaleToMeanNptSize.tcl (divide by zero, missing xsc write) likely remain.
 
+############################################################################################################################################################
 ###########>>> WARNING! THIS SCRIPT FOR NEGATIVELY CHARGED PEPTIDES! IF YOU WANT POSITIVE CHARGED TO BE SIMULATED, CHANGE: <<<##############################
 
 # package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -97} {55 55 167}} -o sin+dna_sol; exit <<<##############################
@@ -20,6 +21,12 @@
 # package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -197} {55 55 97}} -o sin+dna_sol; exit <<<#############################
 
 ############################################################################################################################################################
+
+###########>>> ATTENTION! HOW TO CHANGE ION CONCENTRATIONS <<<##############################################################################################
+
+# You must proceed to building-sin+dna directory and change addIons.tcl script. You must change "set conc 1.0" to you preferable concentration!
+
+#############################################################################################################################################################
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
