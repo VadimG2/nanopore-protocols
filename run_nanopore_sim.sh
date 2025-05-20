@@ -75,7 +75,7 @@ cd "${BASE_DIR}/building-sin+dna"; echo "[3.6] Current directory: $(pwd)"
 echo "[3.6 Step 1] Combining Si3N4 nanopore and PEPTIDE..."; run_vmd_script combine.tcl
 echo "[3.6 Step 2] Adjusting PEPTIDE position..."; run_vmd_script adjustPos.tcl
 echo "[3.6 Step 3] Solvating the combined system..."; cat << EOF > run_vmd_solvate_sin.tcl
-package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -97} {55 55 157}} -o sin+dna_sol; exit
+package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -197} {55 55 97}} -o sin+dna_sol; exit
 EOF
 ${VMD_EXEC} -dispdev text -e run_vmd_solvate_sin.tcl; rm run_vmd_solvate_sin.tcl
 echo "[3.6 Step 4] Cutting water to periodic boundaries..."; run_vmd_script cutWaterHex.tcl
