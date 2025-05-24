@@ -113,7 +113,7 @@ EOF
 echo "Running markDna.tcl via wrapper..."; ${VMD_EXEC} -dispdev text -e run_markDna_wrapper.tcl; rm run_markDna_wrapper.tcl; echo "Finished markDna.tcl (via wrapper)"
 echo "[3.6 Step 10] Generating PEPTIDE-specific force grid..."; if [ -f ../grid/thirdForce ]; then if [ -s sin_positions.txt ]; then ../grid/thirdForce sin_positions.txt grid_basis.txt 1 2 2 specific2-2.dx; else echo "ERROR: sin_positions.txt empty"; exit 1; fi else echo "WARNING: ../grid/thirdForce not found"; fi
 echo "[3.6 Step 11] Minimizing Si3N4+Peptide system..."; ${NAMD_EXEC} ${NAMD_OPTS} sin+dna_min.namd > sin+dna_min.log
-echo "[3.6 Step 12] Equilibrating Si3N4+Peptide system (NPT)..."; ${NAMD_EXEC} ${NAMD_OPTS} sin+dna_eq.namd > sin+dna_eq.log
+echo "[3.6 Step 12] Equilibrating Si3N4+Peptide system (NPT)..."; ${NAMD_EXEC} +p2 +devices 0 sin+dna_eq.namd > sin+dna_eq.log
 cd "${BASE_DIR}"; echo "--- Section 3.6 Finished ---"; echo ""
 
 
