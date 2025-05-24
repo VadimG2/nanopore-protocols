@@ -141,7 +141,7 @@ run_vmd_script scaleToMeanNptSizeSINDNA.tcl # Аргументы не перед
 # --- Step 4b: Run NAMD Simulation for Pore+Peptide System ---
 echo "[3.9 Step 4b] Simulating PORE+PEPTIDE system under 20V bias (NVT)..."
 # Убедитесь, что sin+dna_20V.namd читает scaled_sin+dna_ions.pdb/xsc/etc из ТЕКУЩЕЙ директории
-namd3 +devices 0 +p16 sin+dna_20V.namd > sin+dna_20V.log
+namd3 +devices 0 +p2 sin+dna_20V.namd > sin+dna_20V.log
 echo "Running: $NAMD_CMD_PEPTIDE"
 
 cd "${BASE_DIR}"
