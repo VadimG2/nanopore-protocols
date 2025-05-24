@@ -124,13 +124,13 @@ cd "${BASE_DIR}/running-sin"
 echo "[3.9] Current directory: $(pwd)"
 
 # Запускаем VMD скрипт (он должен сам найти пути типа ../building-sin/...)
-run_vmd_script scaleToMeanNptSizeSIN.tcl # Аргументы не передаем
+#run_vmd_script scaleToMeanNptSizeSIN.tcl # Аргументы не передаем
 
 # --- Step 4a: Run NAMD Simulation for Empty Pore ---
-echo "[3.9 Step 4a] Simulating EMPTY PORE under 20V bias (NVT)..."
+#echo "[3.9 Step 4a] Simulating EMPTY PORE under 20V bias (NVT)..."
 # Убедитесь, что sin_20V.namd читает scaled_sin_ions.pdb/xsc/etc из ТЕКУЩЕЙ директории
-namd3 +devices 0 +p16 sin_20V.namd > sin_20V.log
-echo "Running: $NAMD_CMD_EMPTY"
+#namd3 +devices 0 +p16 sin_20V.namd > sin_20V.log
+#echo "Running: $NAMD_CMD_EMPTY"
 
 #Step 3 (Part 2): Scale Pore+Peptide System ---
 echo "[3.9 Step 3b] Scaling system size for PORE+PEPTIDE (using 'set sys sin+dna')..."
