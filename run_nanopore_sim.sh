@@ -98,6 +98,7 @@ ${VMD_EXEC} -dispdev text -e run_vmd_solvate_sin.tcl; rm run_vmd_solvate_sin.tcl
 echo "[3.6 Step 4] Cutting water to periodic boundaries..."; run_vmd_script cutWaterHex.tcl
 echo "[3.6 Step 5] Adding ions..."; run_vmd_script addIons.tcl
 echo "[3.6 Step 6] Defining harmonic restraints for Si3N4..."; run_vmd_script defineRestraints.tcl
+mv sin+dna_restrain.pdbexit sin+dna_restrain.pdb
 echo "[3.6 Step 7] Setting up membrane thermostat atoms..."; cat << EOF > run_thermostat_setup.tcl
 mol load psf sin+dna_ions.psf pdb sin+dna_ions.pdb; set all [atomselect top all]; set sel [atomselect top "resname SIN"]; \$all set beta 0.0; \$sel set beta 1.0; \$all writepdb sin+dna_langevin.pdb; exit
 EOF
