@@ -12,7 +12,7 @@
 # NOTE: Internal errors in scaleToMeanNptSize.tcl (divide by zero, missing xsc write) likely remain.
 
 ############################################################################################################################################################
-###########>>> WARNING! THIS SCRIPT FOR NEGATIVELY CHARGED PEPTIDES! IF YOU WANT POSITIVE CHARGED TO BE SIMULATED, CHANGE: <<<##############################
+###########>>> WARNING! THIS SCRIPT FOR NEGATIVELY CHARGED PEPTIDES! IF YOU WANT POSITIVELY OR NEUTRALLY CHARGED TO BE SIMULATED, CHANGE: <<<###############
 
 # package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -97} {55 55 167}} -o sin+dna_sol; exit <<<##############################
 
@@ -112,8 +112,8 @@ mol load psf sin+dna_ions.psf pdb sin+dna_ions.pdb; source markDna.tcl; exit
 EOF
 echo "Running markDna.tcl via wrapper..."; ${VMD_EXEC} -dispdev text -e run_markDna_wrapper.tcl; rm run_markDna_wrapper.tcl; echo "Finished markDna.tcl (via wrapper)"
 echo "[3.6 Step 10] Generating PEPTIDE-specific force grid..."; if [ -f ../grid/thirdForce ]; then if [ -s sin_positions.txt ]; then ../grid/thirdForce sin_positions.txt grid_basis.txt 1 2 2 specific2-2.dx; else echo "ERROR: sin_positions.txt empty"; exit 1; fi else echo "WARNING: ../grid/thirdForce not found"; fi
-echo "[3.6 Step 11] Minimizing Si3N4+Peptide system..."; ${NAMD_EXEC} ${NAMD_OPTS} sin+dna_min.namd > sin+dna_min.log
-echo "[3.6 Step 12] Equilibrating Si3N4+Peptide system (NPT)..."; ${NAMD_EXEC} +p2 +devices 0 sin+dna_eq.namd > sin+dna_eq.log
+echo "[3.6 Step 11] Minimizing Si3N4+Peptide system..."; namd3 +p8 sin+dna_min.namd > sin+dna_min.log
+echo "[3.6 Step 12] Equilibrating Si3N4+Peptide system (NPT)..."; namd3 +p2 +devices 0 sin+dna_eq.namd > sin+dna_eq.log
 cd "${BASE_DIR}"; echo "--- Section 3.6 Finished ---"; echo ""
 
 
@@ -129,7 +129,7 @@ echo "[3.9] Current directory: $(pwd)"
 # --- Step 4a: Run NAMD Simulation for Empty Pore ---
 #echo "[3.9 Step 4a] Simulating EMPTY PORE under 20V bias (NVT)..."
 # Убедитесь, что sin_20V.namd читает scaled_sin_ions.pdb/xsc/etc из ТЕКУЩЕЙ директории
-#namd3 +devices 0 +p16 sin_20V.namd > sin_20V.log
+#namd3 +devices 0 +p10 sin_20V.namd > sin_20V.log
 #echo "Running: $NAMD_CMD_EMPTY"
 
 #Step 3 (Part 2): Scale Pore+Peptide System ---
