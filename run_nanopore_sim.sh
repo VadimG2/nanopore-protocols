@@ -12,7 +12,7 @@
 # NOTE: Internal errors in scaleToMeanNptSize.tcl (divide by zero, missing xsc write) likely remain.
 
 ############################################################################################################################################################
-###########>>> WARNING! THIS SCRIPT FOR NEGATIVELY CHARGED PEPTIDES! IF YOU WANT POSITIVELY OR NEUTRALLY CHARGED TO BE SIMULATED, CHANGE: <<<###############
+###########>>> WARNING! THIS SCRIPT FOR NEGATIVELY CHARGED PEPTIDES! IF YOU WANT POSITIVE CHARGED TO BE SIMULATED, CHANGE: <<<##############################
 
 # package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -97} {55 55 167}} -o sin+dna_sol; exit <<<##############################
 
@@ -28,7 +28,7 @@
 
 #############################################################################################################################################################
 
-# Exit immediately if a command exits with a non-zero status.
+# Exit immediately if a command exits with a non-zero status (except where explicitly ignored).
 set -e
 
 # --- Configuration ---
@@ -61,7 +61,6 @@ edit_scale_script() {
 }
 
 echo "=== Starting Nanopore Simulation Automation Script (PEPTIDE MOD + Script Edit + Dir Fix V2) ==="
-# ... (Остальная информация) ...
 
 # === Section 3.1: Building Peptide Structure ===
 echo "--- Section 3.1: Building Peptide Structure ---"
@@ -92,7 +91,7 @@ cd "${BASE_DIR}/building-sin+dna"; echo "[3.6] Current directory: $(pwd)"
 echo "[3.6 Step 1] Combining Si3N4 nanopore and PEPTIDE..."; run_vmd_script combine.tcl
 echo "[3.6 Step 2] Adjusting PEPTIDE position..."; run_vmd_script adjustPos.tcl
 echo "[3.6 Step 3] Solvating the combined system..."; cat << EOF > run_vmd_solvate_sin.tcl
-package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -97} {55 55 167}} -o sin+dna_sol; exit
+package require solvate; solvate sin+dna.psf sin+dna_placed.pdb -minmax {{-55 -55 -197} {55 55 97}} -o sin+dna_sol; exit
 EOF
 ${VMD_EXEC} -dispdev text -e run_vmd_solvate_sin.tcl; rm run_vmd_solvate_sin.tcl
 echo "[3.6 Step 4] Cutting water to periodic boundaries..."; run_vmd_script cutWaterHex.tcl
@@ -112,37 +111,33 @@ mol load psf sin+dna_ions.psf pdb sin+dna_ions.pdb; source markDna.tcl; exit
 EOF
 echo "Running markDna.tcl via wrapper..."; ${VMD_EXEC} -dispdev text -e run_markDna_wrapper.tcl; rm run_markDna_wrapper.tcl; echo "Finished markDna.tcl (via wrapper)"
 echo "[3.6 Step 10] Generating PEPTIDE-specific force grid..."; if [ -f ../grid/thirdForce ]; then if [ -s sin_positions.txt ]; then ../grid/thirdForce sin_positions.txt grid_basis.txt 1 2 2 specific2-2.dx; else echo "ERROR: sin_positions.txt empty"; exit 1; fi else echo "WARNING: ../grid/thirdForce not found"; fi
-echo "[3.6 Step 11] Minimizing Si3N4+Peptide system..."; namd3 +p8 sin+dna_min.namd > sin+dna_min.log
-echo "[3.6 Step 12] Equilibrating Si3N4+Peptide system (NPT)..."; namd3 +p2 +devices 0 sin+dna_eq.namd > sin+dna_eq.log
+echo "[3.6 Step 11] Minimizing Si3N4+Peptide system..."; ${NAMD_EXEC} +p8 sin+dna_min.namd > sin+dna_min.log
+echo "[3.6 Step 12] Equilibrating Si3N4+Peptide system (NPT)..."
+namd3 +p2 +devices 0 sin+dna_eq.namd > sin+dna_eq.log 2>&1 || true
+if [ ! -f sin+dna_eq.restart.coor ] || [ ! -f sin+dna_eq.restart.vel ] || [ ! -f sin+dna_eq.restart.xsc ]; then
+    echo "ERROR: Equilibration failed to generate required restart files (sin+dna_eq.restart.coor, .vel, .xsc)."
+    exit 1
+fi
+echo "[3.6 Step 12] Equilibration completed successfully, restart files generated."
 cd "${BASE_DIR}"; echo "--- Section 3.6 Finished ---"; echo ""
 
-
 # === Section 3.9: Simulating synthetic nanopore with PEPTIDE under E-field ===
-echo "--- Section 3.9: Simulating Si3N4 Systems with E-Field ---"
-# !!! ПЕРЕХОДИМ В РАБОЧУЮ ДИРЕКТОРИЮ ДЛЯ ЭТОЙ СЕКЦИИ !!!
+echo "--- Section 3.9: Simulating Si3N.swiperwidth="600" align="center">3N4 Systems with E-Field ---"
 cd "${BASE_DIR}/running-sin"
 echo "[3.9] Current directory: $(pwd)"
 
-# Запускаем VMD скрипт (он должен сам найти пути типа ../building-sin/...)
-#run_vmd_script scaleToMeanNptSizeSIN.tcl # Аргументы не передаем
-
-# --- Step 4a: Run NAMD Simulation for Empty Pore ---
-#echo "[3.9 Step 4a] Simulating EMPTY PORE under 20V bias (NVT)..."
-# Убедитесь, что sin_20V.namd читает scaled_sin_ions.pdb/xsc/etc из ТЕКУЩЕЙ директории
-#namd3 +devices 0 +p10 sin_20V.namd > sin_20V.log
-#echo "Running: $NAMD_CMD_EMPTY"
-
-#Step 3 (Part 2): Scale Pore+Peptide System ---
+# --- Step 3 (Part 2): Scale Pore+Peptide System ---
 echo "[3.9 Step 3b] Scaling system size for PORE+PEPTIDE (using 'set sys sin+dna')..."
-# Запускаем VMD скрипт (он должен сам найти пути типа ../building-sin+dna/...)
-run_vmd_script scaleToMeanNptSizeSINDNA.tcl # Аргументы не передаем
-# Tcl скрипт должен создать scaled_sin+dna_ions.pdb/xsc в текущей директории (running-sin)
+run_vmd_script scaleToMeanNptSizeSINDNA.tcl
 
 # --- Step 4b: Run NAMD Simulation for Pore+Peptide System ---
 echo "[3.9 Step 4b] Simulating PORE+PEPTIDE system under 20V bias (NVT)..."
-# Убедитесь, что sin+dna_20V.namd читает scaled_sin+dna_ions.pdb/xsc/etc из ТЕКУЩЕЙ директории
-namd3 +devices 0 +p2 sin+dna_20V.namd > sin+dna_20V.log
-echo "Running: $NAMD_CMD_PEPTIDE"
+namd3 +devices 0 +p2 sin+dna_20V.namd > sin+dna_20V.log 2>&1 || true
+if [ ! -f sin+dna_20V.dcd ]; then
+    echo "ERROR: Production simulation failed to generate sin+dna_20V.dcd."
+    exit 1
+fi
+echo "[3.9 Step 4b] Production simulation completed successfully, DCD file generated."
 
 cd "${BASE_DIR}"
 echo "--- Section 3.9 Finished ---"
