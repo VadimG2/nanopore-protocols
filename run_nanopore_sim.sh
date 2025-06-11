@@ -132,7 +132,7 @@ run_vmd_script scaleToMeanNptSizeSINDNA.tcl
 
 # --- Step 4b: Run NAMD Simulation for Pore+Peptide System ---
 echo "[3.9 Step 4b] Simulating PORE+PEPTIDE system under 20V bias (NVT)..."
-namd3 +devices 0 +p2 sin+dna_20V.namd > sin+dna_20V.log 2>&1 || true
+namd3 +p2 +devices 0 sin+dna_20V.namd > sin+dna_20V.log 2>&1 || true
 if [ ! -f sin+dna_20V.dcd ]; then
     echo "ERROR: Production simulation failed to generate sin+dna_20V.dcd."
     exit 1
