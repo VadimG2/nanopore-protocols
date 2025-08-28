@@ -168,7 +168,7 @@ cd "${BASE_DIR}"; echo "--- Section 3.5 Finished ---"; echo ""
 #cd "${BASE_DIR}"; echo "--- Section 3.6 Finished ---"; echo ""
 
 # === Section 3.9: Simulating synthetic nanopore with PEPTIDE under E-field ===
-echo "--- Section 3.9: Simulating Si3N.swiperwidth="600" align="center">3N4 Systems with E-Field ---"
+echo "--- Section 3.9: Simulating Si3N4 Systems with E-Field ---"
 cd "${BASE_DIR}/running-sin"
 echo "[3.9] Current directory: $(pwd)"
 
