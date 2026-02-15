@@ -109,7 +109,7 @@ The script will:
 
 ---
 
-## 📝 What the Script Does (Step by Step)
+## What the Script Does (Step by Step)
 
 ### Section 3.1 – Peptide Building
 - Runs `separate.tcl` (expected to produce `dsdna_A.pdb` and `dsdna_B.pdb`).
